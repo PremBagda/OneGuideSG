@@ -315,3 +315,27 @@ export const theme_api = {
         'required': ['queryName', 'location', 'lat', 'long', 'chasClinic']
     }
 };
+
+
+export const grant_api = {
+    'name': 'grantAPI',
+    'description': "Grant eligibility for seniors",
+    'parameters': {
+        'type': 'object',
+        'properties': {
+            'age': {
+                'type': 'number',
+                'description': "the age of the candidate",
+            },
+            'citizenship': {
+                type: 'string',
+                description: 'Citizenship of the candidate',
+              },
+            'residence': {
+                'type': 'string',
+                'description': 'Type of residence of the candidate'
+            },
+        },
+        'required': ['age', 'citizenship', 'residence']
+    }
+};

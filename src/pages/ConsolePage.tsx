@@ -24,11 +24,14 @@ import { Button } from '../components/button/Button';
 import { Toggle } from '../components/toggle/Toggle';
 import { Map } from '../components/Map';
 import { HospitalData } from '../components/Map';
+import { LatLngTuple } from 'leaflet';
 
 import './ConsolePage.scss';
 import { isJsxOpeningLikeElement } from 'typescript';
-import { theme_api } from '../function_definitions/onemap_api_definition';
+import { theme_api, grant_api } from '../function_definitions/onemap_api_definition';
 import { callApiWithHeaders } from '../helpers/call_onemap_api';
+
+import elderly_support from '../temp/elderly_support.json';
 
 
 /**
@@ -130,6 +133,8 @@ export function ConsolePage() {
   const [marker, setMarker] = useState<Coordinates | null>(null);
 
   const [markerData, setMarkerData] = useState<HospitalData[]>([]); 
+  const [mapZoom, setMapZoom] = useState<number>(12);
+  const [mapCenter, setMapCenter] = useState<LatLngTuple>([1.3521, 103.8198]); 
   /**
    * Utility for formatting the timing of logs
    */
@@ -388,6 +393,61 @@ export function ConsolePage() {
 
     // Add tools
 
+    client.addTool(grant_api,
+      async ({ age, citizenship, residence }: { [key: string]: any }) => {
+
+        console.log("GRANT API ", age, citizenship, residence);
+        function getRandomNumbers(): number[] {
+          const randomNumbers: number[] = [];
+          while (randomNumbers.length < 3) {
+            const num = Math.floor(Math.random() * 25);
+            if (!randomNumbers.includes(num)) {
+              randomNumbers.push(num);
+            }
+          }
+          return randomNumbers;
+        }
+
+        const rand_num = getRandomNumbers();
+
+        function extractText(jsonString: string): string {
+          const parsedJson = JSON.parse(jsonString);
+          let text = '';
+
+          function extractContent(contentArray: { text?: string, content?: any[] }[]) {
+            contentArray.forEach(item => {
+              if (item.content) {
+                extractContent(item.content); // Recursively extract text
+              }
+              if (item.text) {
+                text += item.text + ' '; // Append the text
+              }
+            });
+          }
+
+          parsedJson.content.forEach((item: { content?: any[] }) => {
+            extractContent(item.content || []);
+          });
+
+          return text.trim(); // Return the concatenated text
+        }
+
+
+        return "Sure! The person you query for is eligible for the following grants / subsidies for their medical care: <br/>" +
+          "<ul>" +
+          "<li>" + elderly_support[rand_num[0]].title_en + "</li>" +
+          "<li>" + elderly_support[rand_num[1]].title_en + "</li>" +
+          "<li>" + elderly_support[rand_num[2]].title_en + "</li>" +
+          "</ul>"
+
+
+        return "ELIGIBLE!";
+        // const result = await fetch(
+        //   `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,wind_speed_10m`
+        // );
+        // const json = await result.json();
+      }
+    );
 
     client.addTool(
       theme_api,
@@ -413,14 +473,17 @@ export function ConsolePage() {
             transformedArray.push({
               latitude,
               longitude,
-              description: result.DESCRIPTION,
-              markerIcon: "medical",
+              description: result.NAME,
+              address: result.ADDRESSUNITNUMBER + " " + result.ADDRESSSTREETNAME + ", SINGAPORE " + result.ADDRESSPOSTALCODE,
+              markerIcon: "hospital",
               hyperlink: `https://www.onemap.gov.sg/main/v2/?postalcode=${result.ADDRESSPOSTALCODE}`,
             });
           }
         }
         console.log(transformedArray)
         setMarkerData(transformedArray);
+        setMapCenter([transformedArray[0].latitude, transformedArray[0].longitude])
+        setMapZoom(17);
         return SrchResults;
 
       }
@@ -668,7 +731,15 @@ export function ConsolePage() {
                     <div className={`speaker-content`}>
                       {/* tool response */}
                       {conversationItem.type === 'function_call_output' && (
-                        <div>{conversationItem.formatted.output}</div>
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html:
+                              conversationItem.formatted.transcript ||
+                              conversationItem.formatted.text ||
+                              '(truncated)',
+                          }}
+                        />
+
                       )}
                       {/* tool call */}
                       {!!conversationItem.formatted.tool && (
@@ -760,9 +831,11 @@ export function ConsolePage() {
             <div className="content-block-body full">
               {coords && (
                 <Map
-                  center={[coords.lat, coords.lng]}
+                  center={mapCenter}
                   location={coords.location}
                   data={markerData}
+                  zoom={mapZoom}
+
                 />
               )}
             </div>

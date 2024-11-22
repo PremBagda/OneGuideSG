@@ -7,7 +7,9 @@ import './Map.scss';
 
 function ChangeView({ center, zoom }: { center: LatLngTuple; zoom: number }) {
   const map = useMap();
-  map.setView(center, zoom);
+  useEffect(() => {
+    map.setView(center, zoom);
+  }, [center, zoom, map])
   return null;
 }
 
@@ -17,16 +19,19 @@ export type HospitalData = {
   description: string;
   markerIcon: string;
   hyperlink: string;
+  address: string;
 };
 
 export function Map({
   center,
   location = 'My Location',
-  data
+  data,
+  zoom = 15
 }: {
   center: LatLngTuple;
   location?: string;
     data?: any;
+    zoom?: number;
 }) {
   const [hospitals, setHospitals] = useState<HospitalData[]>([]);
 
@@ -46,12 +51,12 @@ export function Map({
     <div data-component="Map">
       <MapContainer
         center={center}
-        zoom={15}
+        zoom={zoom}
         scrollWheelZoom={true}
         zoomControl={true}
         attributionControl={false}
       >
-        <ChangeView center={center} zoom={12} />
+        <ChangeView center={center} zoom={zoom} />
         <TileLayer url="https://www.onemap.gov.sg/maps/tiles/Default_HD/{z}/{x}/{y}.png" />
         <Marker position={center}>
           <Popup>{location}</Popup>
@@ -60,7 +65,7 @@ export function Map({
           <SinglePointMarker
             key={index}
             title={hospital.description}
-            subtitle="Hospital"
+            subtitle={hospital.address}
             latitude={hospital.latitude}
             longitude={hospital.longitude}
             ThemeIcon={hospital.markerIcon}

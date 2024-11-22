@@ -32,7 +32,7 @@ const SinglePointMarker: React.FC<SinglePointMarkerProps> = ({
   websiteLink,
 }) => {
   const [imageLoaded, setImageLoaded] = useState<boolean>(true);
-  const icon = createIcon(`icons/${ThemeIcon}.svg`);
+  const icon = createIcon(`icons/${ThemeIcon}.png`);
 
   return (
     <Marker position={[latitude, longitude]} icon={icon}>
