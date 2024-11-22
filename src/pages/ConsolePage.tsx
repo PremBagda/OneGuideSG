@@ -27,6 +27,7 @@ import { Map } from '../components/Map';
 import './ConsolePage.scss';
 import { isJsxOpeningLikeElement } from 'typescript';
 import { theme_api } from '../function_definitions/onemap_api_definition';
+import { callApiWithHeaders } from '../helpers/call_onemap_api';
 
 
 /**
@@ -390,6 +391,16 @@ export function ConsolePage() {
       theme_api,
       async ({ queryName, location, lat, long, chasClinic }: { [key: string]: any }) => {
         console.log(queryName, location, lat, long, chasClinic);
+        const endpoint = `https://www.onemap.gov.sg/api/private/themesvc/retrieveNearbyThemeGeoJSON`;
+        const result = await callApiWithHeaders(endpoint, {
+          queryName: queryName,
+          latitude: lat,
+          longtitude: long,
+          distance: "1000"
+        });
+
+        return result;
+
       }
     );
 
