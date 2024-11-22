@@ -120,8 +120,8 @@ export function ConsolePage() {
   const [isRecording, setIsRecording] = useState(false);
   const [memoryKv, setMemoryKv] = useState<{ [key: string]: any }>({});
   const [coords, setCoords] = useState<Coordinates | null>({
-    lat: 37.775593,
-    lng: -122.418137,
+    lat: 1.3521,
+    lng: 103.8198,
   });
   const [marker, setMarker] = useState<Coordinates | null>(null);
 
@@ -203,8 +203,8 @@ export function ConsolePage() {
     setItems([]);
     setMemoryKv({});
     setCoords({
-      lat: 37.775593,
-      lng: -122.418137,
+      lat: 1.3521,
+      lng: 103.8198,
     });
     setMarker(null);
 
@@ -507,8 +507,8 @@ export function ConsolePage() {
     <div data-component="ConsolePage">
       <div className="content-top">
         <div className="content-title">
-          <img src="/openai-logomark.svg" />
-          <span>realtime console</span>
+          <img src="https://mobile.onemap.gov.sg/web/images/OM_logo_icon.png" />
+          <span>OneGuide SG</span>
         </div>
         <div className="content-api-key">
           {!LOCAL_RELAY_SERVER_URL && (
@@ -644,11 +644,14 @@ export function ConsolePage() {
                         )}
                       {!conversationItem.formatted.tool &&
                         conversationItem.role === 'assistant' && (
-                          <div>
-                            {conversationItem.formatted.transcript ||
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html:
+                              conversationItem.formatted.transcript ||
                               conversationItem.formatted.text ||
-                              '(truncated)'}
-                          </div>
+                              '(truncated)',
+                          }}
+                        />
                         )}
                       {conversationItem.formatted.file && (
                         <audio
@@ -695,7 +698,7 @@ export function ConsolePage() {
           <div className="content-block map">
             <div className="content-block-title">get_weather()</div>
             <div className="content-block-title bottom">
-              {marker?.location || 'not yet retrieved'}
+              {marker?.location || ''}
               {!!marker?.temperature && (
                 <>
                   <br />
