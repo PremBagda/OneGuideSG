@@ -1,0 +1,14 @@
+.customMarker {
+  position: relative;
+  width: 50px; // Match the icon size
+  height: 50px; // Match the icon size
+}
+
+.iconStyling {
+  background-color: white; // White circular background
+  border-radius: 50%; // Make it circular
+  width: 100%; // Fill the icon size
+  height: 100%; // Fill the icon size
+  background-size: cover; // Ensure the icon image covers the entire div
+  background-position: center; // Center the icon image
+}
