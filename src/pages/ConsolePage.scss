@@ -322,3 +322,15 @@
 [data-component=ConsolePage] .content-main .content-right>div .content-block-title.bottom {
   display: none !important;
 }
+[data-component=ConsolePage] .content-main .content-logs>div.events {
+  display: none !important;
+}
+
+[data-component=ConsolePage] .content-main .content-logs .conversation {
+  height: 90%;
+  max-height: 90%;
+}
+
+[data-component=ConsolePage] .conversation-item .speaker {
+  width: 60px !important;
+}
