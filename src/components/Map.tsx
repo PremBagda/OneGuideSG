@@ -41,13 +41,16 @@ export function Map({
     <div data-component="Map">
       <MapContainer
         center={center}
-        zoom={11}
+        zoom={15}
         scrollWheelZoom={false}
         zoomControl={false}
         attributionControl={false}
       >
-        <ChangeView center={center} zoom={11} />
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <ChangeView center={center} zoom={12} />
+        <TileLayer url="https://www.onemap.gov.sg/maps/tiles/Default_HD/{z}/{x}/{y}.png" />
+        <Marker position={center}>
+          <Popup>{location}</Popup>
+        </Marker>
         {hospitals.map((hospital, index) => (
           <SinglePointMarker
             key={index}

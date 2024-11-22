@@ -26,6 +26,9 @@ import { Map } from '../components/Map';
 
 import './ConsolePage.scss';
 import { isJsxOpeningLikeElement } from 'typescript';
+import { theme_api } from '../function_definitions/onemap_api_definition';
+import { callApiWithHeaders } from '../helpers/call_onemap_api';
+
 
 /**
  * Type for result from get_weather() function call
@@ -382,6 +385,26 @@ export function ConsolePage() {
     client.updateSession({ input_audio_transcription: { model: 'whisper-1' } });
 
     // Add tools
+
+
+    client.addTool(
+      theme_api,
+      async ({ queryName, location, lat, long, chasClinic }: { [key: string]: any }) => {
+        console.log(queryName, location, lat, long, chasClinic);
+        const endpoint = `https://www.onemap.gov.sg/api/private/themesvc/retrieveNearbyThemeGeoJSON`;
+        const result = await callApiWithHeaders(endpoint, {
+          queryName: queryName,
+          latitude: lat,
+          longtitude: long,
+          distance: "1000"
+        });
+
+        return result;
+
+      }
+    );
+
+
     client.addTool(
       {
         name: 'set_memory',
@@ -507,8 +530,8 @@ export function ConsolePage() {
     <div data-component="ConsolePage">
       <div className="content-top">
         <div className="content-title">
-          <img src="/openai-logomark.svg" />
-          <span>realtime console</span>
+          <img src="https://mobile.onemap.gov.sg/web/images/OM_logo_icon.png" />
+          <span>OneGuide SG</span>
         </div>
         <div className="content-api-key">
           {!LOCAL_RELAY_SERVER_URL && (
@@ -644,11 +667,14 @@ export function ConsolePage() {
                         )}
                       {!conversationItem.formatted.tool &&
                         conversationItem.role === 'assistant' && (
-                          <div>
-                            {conversationItem.formatted.transcript ||
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html:
+                              conversationItem.formatted.transcript ||
                               conversationItem.formatted.text ||
-                              '(truncated)'}
-                          </div>
+                              '(truncated)',
+                          }}
+                        />
                         )}
                       {conversationItem.formatted.file && (
                         <audio
@@ -695,7 +721,7 @@ export function ConsolePage() {
           <div className="content-block map">
             <div className="content-block-title">get_weather()</div>
             <div className="content-block-title bottom">
-              {marker?.location || 'not yet retrieved'}
+              {marker?.location || ''}
               {!!marker?.temperature && (
                 <>
                   <br />
