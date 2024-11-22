@@ -1,0 +1,37 @@
+[
+  {
+    "latitude": 1.304285,
+    "longitude": 103.831927,
+    "description": "Singapore General Hospital, one of the largest and oldest hospitals in Singapore.",
+    "markerIcon": "medical",
+    "hyperlink": "https://www.sgh.com.sg"
+  },
+  {
+    "latitude": 1.31887,
+    "longitude": 103.837048,
+    "description": "Tan Tock Seng Hospital, a major healthcare provider and teaching hospital.",
+    "markerIcon": "medical",
+    "hyperlink": "https://www.ttsh.com.sg"
+  },
+  {
+    "latitude": 1.343739,
+    "longitude": 103.940825,
+    "description": "Changi General Hospital, serving the eastern region of Singapore.",
+    "markerIcon": "medical",
+    "hyperlink": "https://www.cgh.com.sg"
+  },
+  {
+    "latitude": 1.338592,
+    "longitude": 103.84992,
+    "description": "Mount Elizabeth Hospital, a private hospital in Orchard.",
+    "markerIcon": "medical",
+    "hyperlink": "https://www.mountelizabeth.com.sg"
+  },
+  {
+    "latitude": 1.293192,
+    "longitude": 103.782317,
+    "description": "Ng Teng Fong General Hospital, a modern healthcare facility in Jurong.",
+    "markerIcon": "medical",
+    "hyperlink": "https://www.ntfgh.com.sg"
+  }
+]
