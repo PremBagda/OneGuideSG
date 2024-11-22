@@ -26,6 +26,8 @@ import { Map } from '../components/Map';
 
 import './ConsolePage.scss';
 import { isJsxOpeningLikeElement } from 'typescript';
+import { theme_api } from '../function_definitions/onemap_api_definition';
+
 
 /**
  * Type for result from get_weather() function call
@@ -382,6 +384,16 @@ export function ConsolePage() {
     client.updateSession({ input_audio_transcription: { model: 'whisper-1' } });
 
     // Add tools
+
+
+    client.addTool(
+      theme_api,
+      async ({ queryName, location, lat, long, chasClinic }: { [key: string]: any }) => {
+        console.log(queryName, location, lat, long, chasClinic);
+      }
+    );
+
+
     client.addTool(
       {
         name: 'set_memory',
