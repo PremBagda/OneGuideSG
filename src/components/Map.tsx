@@ -1,9 +1,9 @@
-import { MapContainer, TileLayer, useMap } from 'react-leaflet';
+import { Marker, Popup, MapContainer, TileLayer, useMap } from 'react-leaflet';
 import { LatLngTuple } from 'leaflet';
 import React, { useEffect, useState } from 'react';
 import SinglePointMarker from './marker/SinglePointMarker'; // Ensure the correct path
 import './Map.scss';
-import data from '../temp/fakeData.json';
+//import data from '../temp/fakeData.json';
 
 function ChangeView({ center, zoom }: { center: LatLngTuple; zoom: number }) {
   const map = useMap();
@@ -11,7 +11,7 @@ function ChangeView({ center, zoom }: { center: LatLngTuple; zoom: number }) {
   return null;
 }
 
-type HospitalData = {
+export type HospitalData = {
   latitude: number;
   longitude: number;
   description: string;
@@ -22,9 +22,11 @@ type HospitalData = {
 export function Map({
   center,
   location = 'My Location',
+  data
 }: {
   center: LatLngTuple;
   location?: string;
+    data?: any;
 }) {
   const [hospitals, setHospitals] = useState<HospitalData[]>([]);
 
@@ -34,16 +36,19 @@ export function Map({
     //   .then((response) => response.json())
     //   .then((data) => setHospitals(data))
     //   .catch((error) => console.error('Error loading hospital data:', error));
-    setHospitals(data);
-  }, []);
+    if (data) {
+      console.log("DATA IN MAP TSX", data)
+      setHospitals(data); 
+    }
+  }, [data]);
 
   return (
     <div data-component="Map">
       <MapContainer
         center={center}
         zoom={15}
-        scrollWheelZoom={false}
-        zoomControl={false}
+        scrollWheelZoom={true}
+        zoomControl={true}
         attributionControl={false}
       >
         <ChangeView center={center} zoom={12} />

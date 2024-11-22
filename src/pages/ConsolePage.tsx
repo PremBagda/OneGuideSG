@@ -23,6 +23,7 @@ import { X, Edit, Zap, ArrowUp, ArrowDown } from 'react-feather';
 import { Button } from '../components/button/Button';
 import { Toggle } from '../components/toggle/Toggle';
 import { Map } from '../components/Map';
+import { HospitalData } from '../components/Map';
 
 import './ConsolePage.scss';
 import { isJsxOpeningLikeElement } from 'typescript';
@@ -128,6 +129,7 @@ export function ConsolePage() {
   });
   const [marker, setMarker] = useState<Coordinates | null>(null);
 
+  const [markerData, setMarkerData] = useState<HospitalData[]>([]); 
   /**
    * Utility for formatting the timing of logs
    */
@@ -392,14 +394,34 @@ export function ConsolePage() {
       async ({ queryName, location, lat, long, chasClinic }: { [key: string]: any }) => {
         console.log(queryName, location, lat, long, chasClinic);
         const endpoint = `https://www.onemap.gov.sg/api/private/themesvc/retrieveNearbyThemeGeoJSON`;
-        const result = await callApiWithHeaders(endpoint, {
+        let SrchResults = await callApiWithHeaders(endpoint, {
           queryName: queryName,
           latitude: lat,
           longtitude: long,
-          distance: "1000"
+          distance: "500"
         });
+        console.log(SrchResults, SrchResults.length);
+        console.log("AFTER", SrchResults['SrchResults']);
+        SrchResults = SrchResults['SrchResults'];
 
-        return result;
+        const transformedArray = [];
+        for (let i = 0; i < SrchResults.length; i++) {
+          const result = SrchResults[i];
+          if (result.LatLng) {
+            const [latitude, longitude] = result.LatLng.split(",").map(Number);
+            console.log(latitude);
+            transformedArray.push({
+              latitude,
+              longitude,
+              description: result.DESCRIPTION,
+              markerIcon: "medical",
+              hyperlink: `https://www.onemap.gov.sg/main/v2/?postalcode=${result.ADDRESSPOSTALCODE}`,
+            });
+          }
+        }
+        console.log(transformedArray)
+        setMarkerData(transformedArray);
+        return SrchResults;
 
       }
     );
@@ -740,6 +762,7 @@ export function ConsolePage() {
                 <Map
                   center={[coords.lat, coords.lng]}
                   location={coords.location}
+                  data={markerData}
                 />
               )}
             </div>
