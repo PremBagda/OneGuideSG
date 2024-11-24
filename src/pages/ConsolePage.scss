@@ -334,3 +334,14 @@
 [data-component=ConsolePage] .conversation-item .speaker {
   width: 60px !important;
 }
+[data-component=ConsolePage] .conversation-item .speaker:contains("function call output") {
+  display: none;
+}
+
+.speaker-content audio {
+  display: none;
+}
+
+.content-title {
+  font-size: 2em;
+}

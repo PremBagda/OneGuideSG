@@ -3,6 +3,7 @@ import { LatLngTuple } from 'leaflet';
 import React, { useEffect, useState } from 'react';
 import SinglePointMarker from './marker/SinglePointMarker'; // Ensure the correct path
 import './Map.scss';
+import 'leaflet/dist/leaflet.css';
 //import data from '../temp/fakeData.json';
 
 function ChangeView({ center, zoom }: { center: LatLngTuple; zoom: number }) {
@@ -20,6 +21,7 @@ export type HospitalData = {
   markerIcon: string;
   hyperlink: string;
   address: string;
+  chasClinic: boolean;
 };
 
 export function Map({
@@ -42,7 +44,6 @@ export function Map({
     //   .then((data) => setHospitals(data))
     //   .catch((error) => console.error('Error loading hospital data:', error));
     if (data) {
-      console.log("DATA IN MAP TSX", data)
       setHospitals(data); 
     }
   }, [data]);
@@ -57,7 +58,7 @@ export function Map({
         attributionControl={false}
       >
         <ChangeView center={center} zoom={zoom} />
-        <TileLayer url="https://www.onemap.gov.sg/maps/tiles/Default_HD/{z}/{x}/{y}.png" />
+        <TileLayer url="https://www.onemap.gov.sg/maps/tiles/Default/{z}/{x}/{y}.png" />
         <Marker position={center}>
           <Popup>{location}</Popup>
         </Marker>
@@ -70,6 +71,7 @@ export function Map({
             longitude={hospital.longitude}
             ThemeIcon={hospital.markerIcon}
             websiteLink={hospital.hyperlink}
+            chasClinic={hospital.chasClinic}
           />
         ))}
       </MapContainer>

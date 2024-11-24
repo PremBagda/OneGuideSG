@@ -9,7 +9,7 @@ export const callApiWithHeaders = async (endpoint, params) => {
     // Convert params object to query string
     const queryString = new URLSearchParams(params).toString();
     const urlWithParams = `${endpoint}?${queryString}`;
-  
+  console.log(urlWithParams)
     try {
       const response = await fetch(urlWithParams, {
         method: "GET",

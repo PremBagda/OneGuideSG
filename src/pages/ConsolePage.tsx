@@ -32,6 +32,7 @@ import { theme_api, grant_api } from '../function_definitions/onemap_api_definit
 import { callApiWithHeaders } from '../helpers/call_onemap_api';
 
 import elderly_support from '../temp/elderly_support.json';
+import CHASServices from '../temp/CHASServices.json';
 
 
 /**
@@ -464,12 +465,17 @@ export function ConsolePage() {
         console.log("AFTER", SrchResults['SrchResults']);
         SrchResults = SrchResults['SrchResults'];
 
-        const transformedArray = [];
+        let transformedArray = [];
         for (let i = 0; i < SrchResults.length; i++) {
           const result = SrchResults[i];
           if (result.LatLng) {
             const [latitude, longitude] = result.LatLng.split(",").map(Number);
-            console.log(latitude);
+            if (chasClinic == true) {
+              const existsInCHASServices = CHASServices.some(service => service.Name === result.NAME);
+              if (!existsInCHASServices)
+                continue;
+            }
+
             transformedArray.push({
               latitude,
               longitude,
@@ -477,14 +483,21 @@ export function ConsolePage() {
               address: result.ADDRESSUNITNUMBER + " " + result.ADDRESSSTREETNAME + ", SINGAPORE " + result.ADDRESSPOSTALCODE,
               markerIcon: "hospital",
               hyperlink: `https://www.onemap.gov.sg/main/v2/?postalcode=${result.ADDRESSPOSTALCODE}`,
+              chasClinic: chasClinic
             });
           }
         }
+        // Post-processing to remove duplicates based on latitude and longitude
+        transformedArray = transformedArray.filter((value, index, self) =>
+          index === self.findIndex((t) => (
+            t.latitude === value.latitude && t.longitude === value.longitude
+          ))
+        );
         console.log(transformedArray)
         setMarkerData(transformedArray);
         setMapCenter([transformedArray[0].latitude, transformedArray[0].longitude])
-        setMapZoom(17);
-        return SrchResults;
+        setMapZoom(16);
+        return transformedArray;
 
       }
     );
@@ -615,7 +628,7 @@ export function ConsolePage() {
     <div data-component="ConsolePage">
       <div className="content-top">
         <div className="content-title">
-          <img src="https://mobile.onemap.gov.sg/web/images/OM_logo_icon.png" />
+
           <span>OneGuide SG</span>
         </div>
         <div className="content-api-key">
@@ -714,11 +727,11 @@ export function ConsolePage() {
                 return (
                   <div className="conversation-item" key={conversationItem.id}>
                     <div className={`speaker ${conversationItem.role || ''}`}>
-                      <div>
+                      {(conversationItem.type != 'function_call_output') && <div>
                         {(
                           conversationItem.role || conversationItem.type
-                        ).replaceAll('_', ' ')}
-                      </div>
+                        ).replaceAll('_', ' ').replaceAll('function call', '')}
+                      </div>}
                       <div
                         className="close"
                         onClick={() =>
@@ -731,21 +744,14 @@ export function ConsolePage() {
                     <div className={`speaker-content`}>
                       {/* tool response */}
                       {conversationItem.type === 'function_call_output' && (
-                        <div
-                          dangerouslySetInnerHTML={{
-                            __html:
-                              conversationItem.formatted.transcript ||
-                              conversationItem.formatted.text ||
-                              '(truncated)',
-                          }}
-                        />
+                        <></>
 
                       )}
                       {/* tool call */}
                       {!!conversationItem.formatted.tool && (
                         <div>
-                          {conversationItem.formatted.tool.name}(
-                          {conversationItem.formatted.tool.arguments})
+                          {/* {conversationItem.formatted.tool.name}(
+                          {conversationItem.formatted.tool.arguments}) */}
                         </div>
                       )}
                       {!conversationItem.formatted.tool &&
@@ -791,7 +797,7 @@ export function ConsolePage() {
             <div className="spacer" />
             {isConnected && canPushToTalk && (
               <Button
-                label={isRecording ? 'release to send' : 'push to talk'}
+                label={isRecording ? 'release to send' : 'Ask OneGuide'}
                 buttonStyle={isRecording ? 'alert' : 'regular'}
                 disabled={!isConnected || !canPushToTalk}
                 onMouseDown={startRecording}
@@ -812,7 +818,7 @@ export function ConsolePage() {
         </div>
         <div className="content-right">
           <div className="content-block map">
-            <div className="content-block-title">get_weather()</div>
+            <div className="content-block-title"></div>
             <div className="content-block-title bottom">
               {marker?.location || ''}
               {!!marker?.temperature && (

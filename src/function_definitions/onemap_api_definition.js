@@ -1,6 +1,6 @@
 export const theme_api = {
     'name': 'retrieveTheme',
-    'description': "Retrieve location point of interest from Onemap database based on theme. Don't use this for address querying. User can pass in the name of theme/information to query the content such as theater, gardens, community club, MRT exit, libraries, museum, polyclinic, hospitals, police station. In particular Dementia Go to point is referring to dfc_gtp. Medical clinic query should refer to moh_medical_dental. However if user is looking for CHAS clinic or mention about Community Health Assist Scheme, the queryName should be set to moh_chas_clinics and chasClinic parameter will be true",
+    'description': "Retrieve location point of interest from Onemap database based on theme. Don't use this for address querying. User can pass in the name of theme/information to query the content such as theater, gardens, community club, MRT exit, libraries, museum, polyclinic, hospitals, police station. In particular Dementia Go to point is referring to dfc_gtp. Medical clinic query should refer to moh_medical_dental. However if user is looking for CHAS clinic or mention about Community Health Assist Scheme, chasClinic parameter will be true",
     'parameters': {
         'type': 'object',
         'properties': {
@@ -28,7 +28,6 @@ export const theme_api = {
                     "libraries",
                     "otherpanetworks",
                     "museum",
-                    "moh_chas_clinics",
                     "region",
                     "pcn_access_points",
                     "sam_locations",
@@ -166,7 +165,6 @@ export const theme_api = {
                     "ura_parking_capacity_pt",
                     "hdbroadsunderconstruction",
                     "registered_pharmacy",
-                    "moh_hospitals",
                     "voluntarywelfareorgs",
                     "trafficsignal",
                     "sla_dwelling_information_pub",
@@ -309,7 +307,7 @@ export const theme_api = {
             },
             'chasClinic': {
                 'type': 'boolean',
-                'description': 'If the query is moh_chas_clinics, set this to true to filter CHAS clinics only.'
+                'description': 'If the query asked for CHAS card holder, set this to true to filter CHAS clinics only.'
             }
         },
         'required': ['queryName', 'location', 'lat', 'long', 'chasClinic']
